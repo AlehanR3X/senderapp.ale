@@ -5,7 +5,7 @@ import threading
 from config import (
     api_id, api_hash, SESSION_NAME, SLEEP_TIME,
     bot_username, bot2_username, bot3_user, bot4_user,
-    GROUP_CHAT_ID, GROUP_CHAT2_ID
+    GROUP_CHAT_ID, Rimuru_CHK
 )
 import os
 import json
