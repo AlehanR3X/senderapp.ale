@@ -79,7 +79,7 @@ def start_sending():
         "bot3_user": bot3_user,
         "bot4_user": bot4_user,
         "GROUP_CHAT_ID": GROUP_CHAT_ID,
-        "GROUP_CHAT2_ID": GROUP_CHAT2_ID
+        "Rimuru_CHK": Rimuru_CHK  # Actualizado
     }
     destination = destinations.get(destination, destination)
 
