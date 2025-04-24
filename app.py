@@ -4,7 +4,7 @@ import asyncio
 import threading
 from config import (
     api_id, api_hash, SESSION_NAME, SLEEP_TIME,
-    bot_username, bot2_username, bot3_user, bot4_user,
+    bot_username, Aki_bot,
     GROUP_CHAT_ID, Rimuru_CHK
 )
 import os
