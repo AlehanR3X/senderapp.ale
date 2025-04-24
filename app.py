@@ -75,11 +75,9 @@ def start_sending():
     # Mapear destinos a valores reales
     destinations = {
         "bot_username": bot_username,
-        "bot2_username": bot2_username,
-        "bot3_user": bot3_user,
-        "bot4_user": bot4_user,
         "GROUP_CHAT_ID": GROUP_CHAT_ID,
-        "Rimuru_CHK": Rimuru_CHK  # Actualizado
+        "Rimuru_CHK": Rimuru_CHK,
+        "Aki_bot": Aki_bot  # Actualizado
     }
     destination = destinations.get(destination, destination)
 
