@@ -177,10 +177,8 @@
       <select id="destination">
           <option value="bot_username">Bot principal</option>
           <option value="GROUP_CHAT_ID">Grupo 1</option>
-          <option value="bot2_username">Bot_1</option>
-          <option value="bot3_user">Bot_2</option>
-          <option value="Rimuru_CHK">Grupo 2</option> <!-- Actualizado -->
-          <option value="bot4_user">Bot_3</option>
+          <option value="Rimuru_CHK">Rimuru_Chk</option>
+          <option value="Aki_bot">Aki Bot</option> <!-- Actualizado -->
       </select>
   
       <label for="sleepTime">Espera (s):</label>
@@ -353,10 +351,8 @@ async function loadSavedDestinations() {
         destinationSelect.innerHTML = `
             <option value="bot_username">Bot principal</option>
             <option value="GROUP_CHAT_ID">Grupo 1</option>
-            <option value="bot2_username">Bot_1</option>
-            <option value="bot3_user">Bot_2</option>
-            <option value="Rimuru_CHK">Grupo 2</option> <!-- Actualizado -->
-            <option value="bot4_user">Bot_3</option>
+            <option value="Rimuru_CHK">Grupo 2</option>
+            <option value="Aki_bot">Aki Bot</option> <!-- Actualizado -->
         `;
 
         for (const [name, value] of Object.entries(result.destinations)) {
