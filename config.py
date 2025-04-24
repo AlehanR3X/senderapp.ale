@@ -11,5 +11,5 @@ GROUP_CHAT_ID = 2403606655
 GROUP_CHAT_ID2 = -2304417121  # ID del grupo de Telegram
 bot2_username = '@b3authFreeBot'
 bot3_user = "@DuluxeChkFree"
-RIMURU_CHK = 1547217051
+GROUP_CHAT2_ID = 1547217051
 bot4_user = "@Aki_chkbot"
