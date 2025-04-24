@@ -162,15 +162,25 @@
   
       <label for="data">Datos:</label>
       <textarea id="data" placeholder="Un registro por línea..."></textarea>
-  
+
+      <label for="customDestinationName">Nombre del Destino:</label>
+      <input type="text" id="customDestinationName" placeholder="Nombre del destino...">
+
+      <label for="customDestinationValue">Valor del Destino:</label>
+      <input type="text" id="customDestinationValue" placeholder="Valor del destino...">
+
+      <button id="saveDestinationBtn">Guardar Destino</button>
+
+      <hr>
+
       <label for="destination">Destino:</label>
       <select id="destination">
-        <option value="bot_username">Bot principal</option>
-        <option value="GROUP_CHAT_ID">Grupo 1</option>
-        <option value="bot2_username">Bot_1</option>
-        <option value="bot3_user">Bot_2</option>
-        <option value="GROUP_CHAT2_ID">Grupo 2</option>
-        <option value="bot4_user">Bot_3</option>
+          <option value="bot_username">Bot principal</option>
+          <option value="GROUP_CHAT_ID">Grupo 1</option>
+          <option value="bot2_username">Bot_1</option>
+          <option value="bot3_user">Bot_2</option>
+          <option value="GROUP_CHAT2_ID">Grupo 2</option>
+          <option value="bot4_user">Bot_3</option>
       </select>
   
       <label for="sleepTime">Espera (s):</label>
@@ -304,7 +314,65 @@
         showNotification('Error al detener el envío.', false);
       }
     });
+
+    // Guardar un destino personalizado
+document.getElementById('saveDestinationBtn').addEventListener('click', async () => {
+    const name = document.getElementById('customDestinationName').value.trim();
+    const value = document.getElementById('customDestinationValue').value.trim();
+
+    if (!name || !value) {
+        alert('Por favor, ingrese un nombre y un valor para el destino.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/add_destination', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, value })
+        });
+        const result = await response.json();
+
+        if (result.status === 'Destino guardado') {
+            alert('Destino guardado correctamente.');
+            loadSavedDestinations();
+        } else {
+            alert(result.error || 'Error al guardar el destino.');
+        }
+    } catch (error) {
+        alert('Error en la comunicación con el servidor.');
+    }
+});
+
+// Cargar destinos guardados en el desplegable
+async function loadSavedDestinations() {
+    try {
+        const response = await fetch('/list_destinations');
+        const result = await response.json();
+
+        const destinationSelect = document.getElementById('destination');
+        destinationSelect.innerHTML = `
+            <option value="bot_username">Bot principal</option>
+            <option value="GROUP_CHAT_ID">Grupo 1</option>
+            <option value="bot2_username">Bot_1</option>
+            <option value="bot3_user">Bot_2</option>
+            <option value="GROUP_CHAT2_ID">Grupo 2</option>
+            <option value="bot4_user">Bot_3</option>
+        `;
+
+        for (const [name, value] of Object.entries(result.destinations)) {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = name;
+            destinationSelect.appendChild(option);
+        }
+    } catch (error) {
+        console.error('Error al cargar destinos guardados:', error);
+    }
+}
+
+// Llamar a la función para cargar destinos al cargar la página
+loadSavedDestinations();
   </script>
 </body>
 </html>
-``` 
