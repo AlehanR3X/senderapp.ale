@@ -179,7 +179,7 @@
           <option value="GROUP_CHAT_ID">Grupo 1</option>
           <option value="bot2_username">Bot_1</option>
           <option value="bot3_user">Bot_2</option>
-          <option value="GROUP_CHAT2_ID">Grupo 2</option>
+          <option value="Rimuru_CHK">Grupo 2</option> <!-- Actualizado -->
           <option value="bot4_user">Bot_3</option>
       </select>
   
@@ -344,7 +344,6 @@ document.getElementById('saveDestinationBtn').addEventListener('click', async ()
     }
 });
 
-// Cargar destinos guardados en el desplegable
 async function loadSavedDestinations() {
     try {
         const response = await fetch('/list_destinations');
@@ -356,7 +355,7 @@ async function loadSavedDestinations() {
             <option value="GROUP_CHAT_ID">Grupo 1</option>
             <option value="bot2_username">Bot_1</option>
             <option value="bot3_user">Bot_2</option>
-            <option value="GROUP_CHAT2_ID">Grupo 2</option>
+            <option value="Rimuru_CHK">Grupo 2</option> <!-- Actualizado -->
             <option value="bot4_user">Bot_3</option>
         `;
 
@@ -371,7 +370,6 @@ async function loadSavedDestinations() {
     }
 }
 
-// Llamar a la función para cargar destinos al cargar la página
 loadSavedDestinations();
   </script>
 </body>
