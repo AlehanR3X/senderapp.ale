@@ -8,6 +8,9 @@ from config import (
     GROUP_CHAT_ID, GROUP_CHAT2_ID
 )
 import os
+import json
+
+DESTINATIONS_FILE = "destinations.json"
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'cambia_esto_por_un_valor_seguro')
@@ -104,6 +107,39 @@ def pause_sending():
 def stop_sending():
     stop_event.set()
     return jsonify({'status': 'Detenido'})
+
+# Cargar destinos desde el archivo
+def load_destinations():
+    if not os.path.exists(DESTINATIONS_FILE):
+        return {}
+    with open(DESTINATIONS_FILE, 'r') as file:
+        return json.load(file)
+
+# Guardar destinos en el archivo
+def save_destinations(destinations):
+    with open(DESTINATIONS_FILE, 'w') as file:
+        json.dump(destinations, file)
+
+# Endpoint para agregar un destino personalizado
+@app.route('/add_destination', methods=['POST'])
+def add_destination():
+    data = request.json
+    name = data.get('name')
+    value = data.get('value')
+
+    if not name or not value:
+        return jsonify({'error': 'Nombre y valor del destino son requeridos'}), 400
+
+    destinations = load_destinations()
+    destinations[name] = value
+    save_destinations(destinations)
+
+    return jsonify({'status': 'Destino guardado', 'destinations': destinations})
+
+@app.route('/list_destinations', methods=['GET'])
+def list_destinations():
+    destinations = load_destinations()
+    return jsonify({'destinations': destinations})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
