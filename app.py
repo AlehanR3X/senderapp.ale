@@ -73,7 +73,6 @@ def start_sending():
 
     # Mapear destinos a valores reales
     destinations = {
-        "bot_username": bot_username,
         "GROUP_CHAT_ID": GROUP_CHAT_ID,
         "Rimuru_CHK": Rimuru_CHK,
         "Aki_bot": Aki_bot
