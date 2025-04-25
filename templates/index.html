@@ -250,47 +250,37 @@
     }
   
     // Evento para iniciar el proceso de envío de mensajes
-    startBtn.addEventListener('click', async () => {
-      const prefix = prefixInput.value.trim();
-      const dataLines = document.getElementById('data').value.split('\n').filter(line => line.trim());
-      const destination = document.getElementById('destination').value;
-      const sleepSeconds = document.getElementById('sleepSlider').value;
-  
-      if (!validateForm(prefix, dataLines, destination)) return;
-  
-      // Se simula el inicio del envío y actualización de la barra de progreso
-      try {
-        const response = await fetch('/start', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prefix, lines: dataLines, destination, sleep_time: sleepSeconds })
-        });
-        const result = await response.json();
-  
-        if (result.status === 'Envío iniciado') {
-          showNotification('Mensajes enviados correctamente.');
-          // Reiniciar el formulario y la barra de progreso (simulación)
-          document.getElementById('prefix').value = '';
-          document.getElementById('data').value = '';
-          document.getElementById('destination').selectedIndex = 0;
-          document.getElementById('sleepSlider').value = 10;
-          sleepTimeField.value = 10;
-          updateProgress(0, dataLines.length);
-          // Ejemplo de simulación de avance: se actualiza la barra cada medio segundo
-          let count = 0;
-          const progressInterval = setInterval(() => {
-            count++;
-            updateProgress(count, dataLines.length);
-            if (count >= dataLines.length) clearInterval(progressInterval);
-          }, 500);
-        } else {
-          showNotification(result.error || 'Error al enviar los mensajes.', false);
-        }
-      } catch (error) {
-        showNotification('Error en la comunicación con el servidor.', false);
+    document.getElementById('messageForm').addEventListener('submit', (event) => {
+  event.preventDefault(); // Evita el reinicio de la página
+  const prefix = document.getElementById('prefix').value.trim();
+  const dataLines = document.getElementById('data').value.split('\n').filter(line => line.trim());
+  const destination = document.getElementById('destination').value;
+  const sleepSeconds = document.getElementById('sleepSlider').value;
+
+  if (!prefix || dataLines.length === 0 || !destination) {
+    alert('Por favor, completa todos los campos.');
+    return;
+  }
+
+  // Realiza la solicitud al servidor
+  fetch('/start', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prefix, lines: dataLines, destination, sleep_time: sleepSeconds })
+  })
+    .then(response => response.json())
+    .then(result => {
+      if (result.status === 'Envío iniciado') {
+        alert('Envío iniciado correctamente.');
+      } else {
+        alert(result.error || 'Error al iniciar el envío.');
       }
+    })
+    .catch(() => {
+      alert('Error en la comunicación con el servidor.');
     });
-  
+});
+
     // Evento para pausar el envío de mensajes
     pauseBtn.addEventListener('click', async () => {
       try {
