@@ -201,162 +201,160 @@
   </div>
 
   <script>
-    // Referencias a elementos del DOM
-    const startBtn = document.getElementById('startBtn');
-    const pauseBtn = document.getElementById('pauseBtn');
-    const stopBtn = document.getElementById('stopBtn');
-    const progressBar = document.getElementById('progress');
-    const sleepSlider = document.getElementById('sleepSlider');
-    const sleepTimeField = document.getElementById('sleepTime');
-    const prefixInput = document.getElementById('prefix');
-    const prefixCombo = document.getElementById('prefixCombo');
-    const notification = document.getElementById('notification');
-  
-    // Sincronizar slider y campo de texto del tiempo de espera
-    sleepSlider.addEventListener('input', () => {
-      sleepTimeField.value = sleepSlider.value;
-    });
-    sleepTimeField.addEventListener('input', () => {
-      sleepSlider.value = sleepTimeField.value;
-    });
-  
-    // Sincronizar selección de prefijo
-    prefixCombo.addEventListener('change', () => {
-      prefixInput.value = prefixCombo.value;
-    });
-  
-    // Función para mostrar notificaciones en pantalla
-    function showNotification(message, success = true) {
-      notification.style.display = 'block';
-      notification.style.backgroundColor = success ? '#d4edda' : '#f8d7da';
-      notification.style.color = success ? '#155724' : '#721c24';
-      notification.textContent = message;
-      setTimeout(() => { notification.style.display = 'none'; }, 4000);
-    }
-  
-    // Función simulada para actualizar la barra de progreso
-    function updateProgress(current, total) {
-      const progressPercent = Math.round((current / total) * 100);
-      progressBar.style.width = progressPercent + '%';
-    }
-  
-    // Función para validar datos mínimos antes de enviar la petición
-    function validateForm(prefix, data, destination) {
-      if (!prefix.trim() || !data.length || !destination) {
-        showNotification('Por favor, complete todos los campos necesarios.', false);
-        return false;
-      }
-      return true;
-    }
-  
-    // Evento para iniciar el proceso de envío de mensajes
-    document.getElementById('messageForm').addEventListener('submit', (event) => {
-  event.preventDefault(); // Evita el reinicio de la página
-  const prefix = document.getElementById('prefix').value.trim();
-  const dataLines = document.getElementById('data').value.split('\n').filter(line => line.trim());
-  const destination = document.getElementById('destination').value;
-  const sleepSeconds = document.getElementById('sleepSlider').value;
+  // Referencias a elementos del DOM
+  const startBtn = document.getElementById('startBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const progressBar = document.getElementById('progress');
+  const sleepSlider = document.getElementById('sleepSlider');
+  const sleepTimeField = document.getElementById('sleepTime');
+  const prefixInput = document.getElementById('prefix');
+  const prefixCombo = document.getElementById('prefixCombo');
+  const notification = document.getElementById('notification');
 
-  if (!prefix || dataLines.length === 0 || !destination) {
-    alert('Por favor, completa todos los campos.');
-    return;
+  // Sincronizar slider y campo de texto del tiempo de espera
+  sleepSlider.addEventListener('input', () => {
+    sleepTimeField.value = sleepSlider.value;
+  });
+  sleepTimeField.addEventListener('input', () => {
+    sleepSlider.value = sleepTimeField.value;
+  });
+
+  // Sincronizar selección de prefijo
+  prefixCombo.addEventListener('change', () => {
+    prefixInput.value = prefixCombo.value;
+  });
+
+  // Función para mostrar notificaciones en pantalla
+  function showNotification(message, success = true) {
+    notification.style.display = 'block';
+    notification.style.backgroundColor = success ? '#d4edda' : '#f8d7da';
+    notification.style.color = success ? '#155724' : '#721c24';
+    notification.textContent = message;
+    setTimeout(() => { notification.style.display = 'none'; }, 4000);
   }
 
-  // Realiza la solicitud al servidor
-  fetch('/start', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prefix, lines: dataLines, destination, sleep_time: sleepSeconds })
-  })
-    .then(response => response.json())
-    .then(result => {
-      if (result.status === 'Envío iniciado') {
-        alert('Envío iniciado correctamente.');
-      } else {
-        alert(result.error || 'Error al iniciar el envío.');
-      }
+  // Función simulada para actualizar la barra de progreso
+  function updateProgress(current, total) {
+    const progressPercent = Math.round((current / total) * 100);
+    progressBar.style.width = progressPercent + '%';
+  }
+
+  // Función para validar datos mínimos antes de enviar la petición
+  function validateForm(prefix, data, destination) {
+    if (!prefix.trim() || !data.length || !destination) {
+      showNotification('Por favor, complete todos los campos necesarios.', false);
+      return false;
+    }
+    return true;
+  }
+
+  // Evento para iniciar el proceso de envío de mensajes
+  startBtn.addEventListener('click', () => {
+    const prefix = document.getElementById('prefix').value.trim();
+    const dataLines = document.getElementById('data').value.split('\n').filter(line => line.trim());
+    const destination = document.getElementById('destination').value;
+    const sleepSeconds = document.getElementById('sleepSlider').value;
+
+    if (!validateForm(prefix, dataLines, destination)) {
+      return;
+    }
+
+    // Realiza la solicitud al servidor
+    fetch('/start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prefix, lines: dataLines, destination, sleep_time: sleepSeconds })
     })
-    .catch(() => {
-      alert('Error en la comunicación con el servidor.');
-    });
-});
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === 'Envío iniciado') {
+          showNotification('Envío iniciado correctamente.');
+        } else {
+          showNotification(result.error || 'Error al iniciar el envío.', false);
+        }
+      })
+      .catch(() => {
+        showNotification('Error en la comunicación con el servidor.', false);
+      });
+  });
 
-    // Evento para pausar el envío de mensajes
-    pauseBtn.addEventListener('click', async () => {
-      try {
-        const response = await fetch('/pause', { method: 'POST' });
-        const result = await response.json();
-        showNotification(result.status);
-      } catch (error) {
-        showNotification('Error al pausar el envío.', false);
-      }
-    });
-  
-    // Evento para detener el envío de mensajes
-    stopBtn.addEventListener('click', async () => {
-      try {
-        const response = await fetch('/stop', { method: 'POST' });
-        const result = await response.json();
-        showNotification(result.status);
-      } catch (error) {
-        showNotification('Error al detener el envío.', false);
-      }
-    });
+  // Evento para pausar el envío de mensajes
+  pauseBtn.addEventListener('click', async () => {
+    try {
+      const response = await fetch('/pause', { method: 'POST' });
+      const result = await response.json();
+      showNotification(result.status);
+    } catch (error) {
+      showNotification('Error al pausar el envío.', false);
+    }
+  });
 
-    // Guardar un destino personalizado
-document.getElementById('saveDestinationBtn').addEventListener('click', async () => {
+  // Evento para detener el envío de mensajes
+  stopBtn.addEventListener('click', async () => {
+    try {
+      const response = await fetch('/stop', { method: 'POST' });
+      const result = await response.json();
+      showNotification(result.status);
+    } catch (error) {
+      showNotification('Error al detener el envío.', false);
+    }
+  });
+
+  // Guardar un destino personalizado
+  document.getElementById('saveDestinationBtn').addEventListener('click', async () => {
     const name = document.getElementById('customDestinationName').value.trim();
     const value = document.getElementById('customDestinationValue').value.trim();
 
     if (!name || !value) {
-        alert('Por favor, ingrese un nombre y un valor para el destino.');
-        return;
+      alert('Por favor, ingrese un nombre y un valor para el destino.');
+      return;
     }
 
     try {
-        const response = await fetch('/add_destination', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, value })
-        });
-        const result = await response.json();
+      const response = await fetch('/add_destination', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, value })
+      });
+      const result = await response.json();
 
-        if (result.status === 'Destino guardado') {
-            alert('Destino guardado correctamente.');
-            loadSavedDestinations();
-        } else {
-            alert(result.error || 'Error al guardar el destino.');
-        }
+      if (result.status === 'Destino guardado') {
+        alert('Destino guardado correctamente.');
+        loadSavedDestinations();
+      } else {
+        alert(result.error || 'Error al guardar el destino.');
+      }
     } catch (error) {
-        alert('Error en la comunicación con el servidor.');
+      alert('Error en la comunicación con el servidor.');
     }
-});
+  });
 
-async function loadSavedDestinations() {
+  async function loadSavedDestinations() {
     try {
-        const response = await fetch('/list_destinations');
-        const result = await response.json();
+      const response = await fetch('/list_destinations');
+      const result = await response.json();
 
-        const destinationSelect = document.getElementById('destination');
-        destinationSelect.innerHTML = `
-            <option value="bot_username">Bot principal</option>
-            <option value="GROUP_CHAT_ID">Grupo 1</option>
-            <option value="Rimuru_CHK">Grupo 2</option>
-            <option value="Aki_bot">Aki Bot</option> <!-- Actualizado -->
-        `;
+      const destinationSelect = document.getElementById('destination');
+      destinationSelect.innerHTML = `
+        <option value="bot_username">Bot principal</option>
+        <option value="GROUP_CHAT_ID">Grupo 1</option>
+        <option value="Rimuru_CHK">Grupo 2</option>
+        <option value="Aki_bot">Aki Bot</option> <!-- Actualizado -->
+      `;
 
-        for (const [name, value] of Object.entries(result.destinations)) {
-            const option = document.createElement('option');
-            option.value = value;
-            option.textContent = name;
-            destinationSelect.appendChild(option);
-        }
+      for (const [name, value] of Object.entries(result.destinations)) {
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = name;
+        destinationSelect.appendChild(option);
+      }
     } catch (error) {
-        console.error('Error al cargar destinos guardados:', error);
+      console.error('Error al cargar destinos guardados:', error);
     }
-}
+  }
 
-loadSavedDestinations();
-  </script>
+  loadSavedDestinations();
+</script>
 </body>
 </html>
