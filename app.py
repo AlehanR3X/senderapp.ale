@@ -4,7 +4,7 @@ import asyncio
 import threading
 from config import (
     api_id, api_hash, SESSION_NAME, SLEEP_TIME,
-    GROUP_CHAT_ID, Rimuru_CHK
+    GROUP_CHAT_ID, Rimuru_CHK, bot_username, Aki_bot
 )
 import os
 import json
@@ -73,6 +73,7 @@ def start_sending():
 
     # Mapear destinos a valores reales
     destinations = {
+        "bot_username": bot_username,
         "GROUP_CHAT_ID": GROUP_CHAT_ID,
         "Rimuru_CHK": Rimuru_CHK,
         "Aki_bot": Aki_bot
