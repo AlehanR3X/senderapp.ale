@@ -65,26 +65,25 @@ def start_sending():
 
     # Validaciones
     if not prefix or not isinstance(lines, list) or not all(isinstance(l, str) for l in lines):
-        return jsonify({'error': 'El prefijo y las líneas son requeridos y deben ser texto.'}), 400
+        return jsonify({'error': 'Datos inválidos'}), 400
     if not destination:
-        return jsonify({'error': 'Destino requerido'}), 400
+        return jsonify({'error': 'Destino no especificado'}), 400
     if sending_thread and sending_thread.is_alive():
-        return jsonify({'error': 'Ya hay un envío en curso.'}), 400
+        return jsonify({'error': 'Ya hay un envío en curso'}), 400
 
     # Mapear destinos a valores reales
     destinations = {
         "bot_username": bot_username,
         "GROUP_CHAT_ID": GROUP_CHAT_ID,
         "Rimuru_CHK": Rimuru_CHK,
-        "Aki_bot": Aki_bot  # Actualizado
+        "Aki_bot": Aki_bot
     }
     destination = destinations.get(destination, destination)
 
     # Iniciar hilo de envío
     def run_async():
-        asyncio.new_event_loop().run_until_complete(
-            send_messages(prefix, lines, destination, sleep_time)
-        )
+        asyncio.run(send_messages(prefix, lines, destination, sleep_time))
+
     sending_thread = threading.Thread(target=run_async)
     sending_thread.start()
     return jsonify({'status': 'Envío iniciado'})
