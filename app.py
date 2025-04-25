@@ -4,7 +4,7 @@ import asyncio
 import threading
 from config import (
     api_id, api_hash, SESSION_NAME, SLEEP_TIME,
-    bot_username, Aki_bot,
+    bot_username, bot2_username, bot3_user, bot4_user,
     GROUP_CHAT_ID, Rimuru_CHK
 )
 import os
@@ -32,17 +32,17 @@ async def send_messages(prefix, lines, destination, sleep_time):
             if not await client.is_user_authorized():
                 await client.start()
         except errors.PasswordHashInvalidError:
-            # La contraseña de 2FA debería haberse ingresado via endpoint separado
             return
         except Exception as e:
             print(f"Error al iniciar sesión: {e}")
             return
 
-        for i, line in enumerate(lines):
+        while lines:  # Mientras haya líneas en la lista
             if stop_event.is_set():
                 break
             while pause_event.is_set():
                 await asyncio.sleep(0.5)
+            line = lines.pop(0)  # Elimina y obtiene la primera línea
             message = f"{prefix} {line}"
             try:
                 await client.send_message(destination, message)
